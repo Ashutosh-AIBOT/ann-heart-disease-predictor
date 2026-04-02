@@ -8,4 +8,9 @@ MODELS = ROOT / "models"
 CHARTS = ROOT / "charts"
 
 for folder in (DATA_RAW, DATA_PROCESSED, DATA_ARTIFACTS, MODELS, CHARTS):
-    folder.mkdir(parents=True, exist_ok=True)
+    try:
+        folder.mkdir(parents=True, exist_ok=True)
+    except PermissionError:
+        # In Docker production (Hugging Face), these folders already exist in the image
+        # but the user UID 1000 may not have 'mkdir' permissions on the /app mount.
+        pass
