@@ -64,7 +64,7 @@ The project is deployed via **Streamlit Cloud** and **Hugging Face Spaces**.
 ### Local Host Instructions
 1. **Activate Environment**:
    ```bash
-   conda activate agent
+   conda activate ml-env
    ```
 2. **Run Application**:
    ```bash

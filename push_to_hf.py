@@ -2,13 +2,13 @@ import os
 from huggingface_hub import HfApi
 
 # --- CONFIGURATION ---
-# CHANGE THIS to your actual HF username (e.g. "ashutosh/heart-predictor")
-REPO_ID = "YOUR_HF_USERNAME/ann-heart-disease-predictor" 
+# Professional Naming: Deep Learning Keyword + Problem Domain
+REPO_ID = "Ashutosh-AIBOT/ann-heart-disease-predictor" 
 PROJECT_FOLDER = "/home/ashutosh/Desktop/NO-AI-USE/Deep-learning/ANN Binary Classification"
 
 api = HfApi()
 
-print(f"🚀 Starting deployment of {PROJECT_FOLDER} to {REPO_ID}...")
+print(f"🚀 Starting professional deployment of {PROJECT_FOLDER} to Hugging Face...")
 
 # 1. Create space if not exists
 try:
@@ -31,6 +31,6 @@ api.upload_folder(
 )
 
 print("-" * 30)
-print(f"✅ SUCCESS! Your app is deploying at: https://huggingface.co/spaces/{REPO_ID}")
+print(f"✅ SUCCESS! Your app is live at: https://huggingface.co/spaces/{REPO_ID}")
 print("Please allow 3-5 minutes for Hugging Face to build the environment.")
 print("-" * 30)
