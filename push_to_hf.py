@@ -27,8 +27,8 @@ api.upload_folder(
     folder_path=PROJECT_FOLDER,
     repo_id=REPO_ID,
     repo_type="space",
-    allow_patterns=["*.py", "*.txt", "*.md", "Dockerfile", "models/*", "data/artifacts/*", "data/raw/*", "charts/*"],
-    ignore_patterns=["notebooks/*", "__pycache__/*", "*.pdf", "data/processed/*", ".git/*", ".gitattributes", "push_to_hf.py"],
+    allow_patterns=["*.py", "*.txt", "*.md", "Dockerfile", "models/*", "data/artifacts/*", "data/raw/*", "charts/*", "data/processed/*.pkl"],
+    ignore_patterns=["notebooks/*", "__pycache__/*", "*.pdf", "data/processed/*.json", ".git/*", ".gitattributes", "push_to_hf.py"],
 )
 
 print("-" * 30)

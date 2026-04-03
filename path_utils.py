@@ -7,10 +7,5 @@ DATA_ARTIFACTS = ROOT / "data" / "artifacts"
 MODELS = ROOT / "models"
 CHARTS = ROOT / "charts"
 
-for folder in (DATA_RAW, DATA_PROCESSED, DATA_ARTIFACTS, MODELS, CHARTS):
-    try:
-        folder.mkdir(parents=True, exist_ok=True)
-    except PermissionError:
-        # In Docker production (Hugging Face), these folders already exist in the image
-        # but the user UID 1000 may not have 'mkdir' permissions on the /app mount.
-        pass
+# Folders should be pre-created in the Docker image to avoid runtime PermissionErrors
+# No runtime mkdir here for production safety
