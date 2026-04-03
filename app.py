@@ -3,14 +3,22 @@ import numpy as np
 import seaborn as sns
 import streamlit as st
 
-from dashboard_core import get_metrics, get_training_curves, predict_proba
+from dashboard_core import get_metrics, get_training_curves, predict_proba, load_model_and_scaler
 from path_utils import CHARTS
 
 st.set_page_config(page_title="Heart Disease Predictor", layout="wide")
 st.title("Heart Disease Risk Predictor")
 st.caption("Raw input -> saved preprocessor (scaler+encoder) -> trained ANN model")
 
-st.sidebar.header("Clinical Inputs")
+# --- HEALTH CHECK ---
+model, preprocessor = load_model_and_scaler()
+with st.sidebar:
+    st.header("Clinical Inputs")
+    if model and preprocessor:
+        st.success("✅ System Ready: Model & Preprocessor Loaded")
+    else:
+        st.error("❌ System Error: Missing Model/Preprocessor Artifacts")
+        st.info("Ensure `models/` and `data/artifacts/` folders are populated.")
 
 features = {
     "Age": st.sidebar.slider("Age", 20, 90, 52),
@@ -29,22 +37,25 @@ features = {
 if "prediction_history" not in st.session_state:
     st.session_state.prediction_history = []
 
-if st.button("Predict"):
-    prob = predict_proba(features)
-    label = "Heart Disease Likely" if prob >= 0.5 else "Low Risk"
-    st.session_state.prediction_history.append(prob)
+if st.button("Predict", disabled=(model is None)):
+    try:
+        prob = predict_proba(features)
+        label = "Heart Disease Likely" if prob >= 0.5 else "Low Risk"
+        st.session_state.prediction_history.append(prob)
 
-    st.subheader("Live Prediction Result")
-    c1, c2 = st.columns(2)
-    with c1:
-        st.metric("Predicted Probability", f"{prob:.3f}")
-        st.progress(int(prob * 100))
-    with c2:
-        st.metric("Predicted Class", label)
+        st.subheader("Live Prediction Result")
+        c1, c2 = st.columns(2)
+        with c1:
+            st.metric("Predicted Probability", f"{prob:.3f}")
+            st.progress(int(prob * 100))
+        with c2:
+            st.metric("Predicted Class", label)
 
-    hist = np.array(st.session_state.prediction_history, dtype=float)
-    st.line_chart(hist)
-    st.caption("This line chart is real-time and updates after each Predict click.")
+        hist = np.array(st.session_state.prediction_history, dtype=float)
+        st.line_chart(hist)
+        st.caption("This line chart is real-time and updates after each Predict click.")
+    except Exception as e:
+        st.error(f"Prediction Error: {e}")
 
 curves_tab, charts_tab, arch_tab = st.tabs(
     ["Training Curves", "Evaluation Charts", "Model Architecture"]

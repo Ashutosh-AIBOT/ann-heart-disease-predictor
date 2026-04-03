@@ -51,21 +51,35 @@ RAW_FEATURES = [
 ]
 
 
-def load_model_and_scaler():
+def load_model_and_scaler() -> tuple[HeartANN | None, any | None]:
     if _artifact_cache:
-        return _artifact_cache["model"], _artifact_cache["preprocessor"]
+        return _artifact_cache.get("model"), _artifact_cache.get("preprocessor")
 
-    with open(DATA_ARTIFACTS / "preprocessor.pkl", "rb") as f:
-        preprocessor = pickle.load(f)
+    try:
+        prep_path = DATA_ARTIFACTS / "preprocessor.pkl"
+        if not prep_path.exists():
+            print(f"❌ Error: {prep_path} missing.")
+            return None, None
+            
+        with open(prep_path, "rb") as f:
+            preprocessor = pickle.load(f)
 
-    input_dim = len(preprocessor.get_feature_names_out())
-    model = HeartANN(input_dim=input_dim)
-    model.load_state_dict(torch.load(MODELS / "model.pkl", map_location="cpu"))
-    model.eval()
+        model_path = MODELS / "model.pkl"
+        if not model_path.exists():
+            print(f"❌ Error: {model_path} missing.")
+            return None, None
 
-    _artifact_cache["model"] = model
-    _artifact_cache["preprocessor"] = preprocessor
-    return model, preprocessor
+        input_dim = len(preprocessor.get_feature_names_out())
+        model = HeartANN(input_dim=input_dim)
+        model.load_state_dict(torch.load(model_path, map_location="cpu"))
+        model.eval()
+
+        _artifact_cache["model"] = model
+        _artifact_cache["preprocessor"] = preprocessor
+        return model, preprocessor
+    except Exception as e:
+        print(f"❌ Unexpected Error: {e}")
+        return None, None
 
 
 def predict_proba(features_dict: dict) -> float:
